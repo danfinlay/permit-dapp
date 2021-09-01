@@ -8,29 +8,34 @@ import {
 import Grant from './Grant';
 import Redeem from './Redeem';
 import Revoke from './Revoke';
+import React, { useContext } from 'react'
+import { Web3Context } from 'web3-hooks'
 
 function App() {
+
   return (
 
     <div className="App">
+
       <Router>
+
         <header className="App-header">
           <h1>Off-chain Allowance Sharer</h1>
           <p>Must have MetaMask installed and connected to mainnet.</p>
-          <nav>
-              <Link to="/">Grant</Link>
-              <Link to="/redeem">Redeem</Link>
-              <Link to="/revoke">Revoke</Link>
-          </nav>
 
+          <Login></Login>
+
+          <nav>
+            <Link to="/grant">Grant</Link>
+            <Link to="/redeem">Redeem</Link>
+            <Link to="/revoke">Revoke</Link>
+          </nav>
 
         </header>
 
         <div>
-          {/* A <Switch> looks through its children <Route>s and
-              renders the first one that matches the current URL. */}
           <Switch>
-            <Route path="/">
+            <Route path="/grant">
               <Grant/>
             </Route>
             <Route path="/redeem">
@@ -45,6 +50,26 @@ function App() {
 
     </div>
   );
+}
+
+const Login = () => {
+  const [web3State, login] = useContext(Web3Context)
+  return (
+    <>
+      <p>Web3: {web3State.isWeb3 ? 'injected' : 'no-injected'}</p>
+      <p>Network id: {web3State.chainId}</p>
+      <p>Network name: {web3State.networkName}</p>
+      <p>MetaMask installed: {web3State.isMetaMask ? 'yes' : 'no'}</p>
+      <p>logged: {web3State.isLogged ? 'yes' : 'no'}</p>
+      <p>account: {web3State.account}</p>
+      <p>Balance: {web3State.balance}</p>
+      {!web3State.isLogged && (
+        <>
+          <button onClick={login}>login</button>
+        </>
+      )}
+    </>
+  )
 }
 
 export default App;
