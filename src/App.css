@@ -27,6 +27,18 @@
   color: #61dafb;
 }
 
+.button {
+  background: rgb(203, 203, 203);
+  display: inline-block;
+  border-radius: 4px;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: white;
+}
+
 nav > a {
   padding: 5px;
   margin: 5px;

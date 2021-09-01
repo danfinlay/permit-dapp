@@ -7,7 +7,6 @@ import detectEthereumProvider from '@metamask/detect-provider';
 function App() {
   const [accounts, setAccounts] = useState([]);
   const [provider, setProvider] = useState(undefined);
-  checkAccounts(accounts, setAccounts);
 
   return (
 
@@ -20,12 +19,6 @@ function App() {
  
     </div>
   );
-}
-
-async function checkAccounts (_oldAccounts, setAccounts) {
-  const provider = await detectEthereumProvider();
-  const accounts = await provider.request({ method: 'eth_accounts' });
-  setAccounts(accounts);
 }
 
 export default App;

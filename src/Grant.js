@@ -17,7 +17,7 @@ const supportedTokens = [
 
 export default function Grant (props) {
   const history = useHistory();
-  const { accounts, provider } = props;
+  const { accounts } = props;
   const [sender, setSender] = useState(accounts[0]);
   const [selectedToken, setSelectedToken] = useState(supportedTokens[0].address);
   const [recipient, setRecipient] = useState('');
@@ -58,7 +58,8 @@ export default function Grant (props) {
       <input id="quantity" placeholder="0" type="number" onChange={(event) => {
         setAmount(event.target.value);
       }}></input><br/>
-      <button onClick={async () => {
+      <div onClick={async (event) => {
+        event.preventDefault();
         try {
           const result = await signERC2612Permit(window.ethereum, selectedToken, sender, recipient, amount);
           console.dir(result);
@@ -68,8 +69,8 @@ export default function Grant (props) {
         } catch (err) {
           setErr(err.message);
         }
-      }}>Create Grant</button>
-      {errMsg ? <p class="error">errMsg</p> : undefined}
+      }} className="button">Create Grant</div>
+      {errMsg ? <p className="error">{errMsg}</p> : undefined}
     </div>
   </div>)
 }
