@@ -1,5 +1,8 @@
 import { signERC2612Permit } from 'eth-permit';
 import React, { useState } from 'react';
+import {
+  useHistory 
+} from "react-router-dom";
 
 const supportedTokens = [
   {
@@ -13,11 +16,13 @@ const supportedTokens = [
 ]
 
 export default function Grant (props) {
+  const history = useHistory();
   const { accounts, provider } = props;
   const [sender, setSender] = useState(accounts[0]);
   const [selectedToken, setSelectedToken] = useState(supportedTokens[0].address);
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('0');
+  const [errMsg, setErr] = useState(undefined);
 
   return (<div>
     <h2>Grant</h2>
@@ -25,7 +30,7 @@ export default function Grant (props) {
       <p>What account to grant from?</p>
       <select value={sender}
         onChange={(event) => {
-          setSelectedToken(event.target.selectValue);
+          setSender(event.target.selectValue);
         }}>
         {accounts.map((address) => {
           return <option value={address} key={address}>
@@ -54,9 +59,17 @@ export default function Grant (props) {
         setAmount(event.target.value);
       }}></input><br/>
       <button onClick={async () => {
-        const result = await signERC2612Permit(window.ethereum, selectedToken, sender, recipient, amount);
- 
+        try {
+          const result = await signERC2612Permit(window.ethereum, selectedToken, sender, recipient, amount);
+          console.dir(result);
+          const json = JSON.stringify(result);
+          const param = encodeURI(json);
+          history.push(`/redeem/${param}`)        
+        } catch (err) {
+          setErr(err.message);
+        }
       }}>Create Grant</button>
+      {errMsg ? <p class="error">errMsg</p> : undefined}
     </div>
   </div>)
 }

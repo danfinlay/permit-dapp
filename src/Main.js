@@ -5,7 +5,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  useParams
 } from "react-router-dom";
 
 export default function Main (props) {
@@ -32,7 +33,7 @@ export default function Main (props) {
         <Route path="/grant">
           <Grant provider={provider} accounts={accounts}/>
         </Route>
-        <Route path="/redeem">
+        <Route path="/redeem/:approval">
           <Redeem provider={provider}/>
         </Route>
         <Route path="/revoke">
