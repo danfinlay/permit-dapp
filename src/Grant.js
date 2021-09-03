@@ -1,8 +1,13 @@
 import { signERC2612Permit } from 'eth-permit';
 import React, { useState } from 'react';
+import { default as AddressInput } from './components/AddressInput';
+import { default as EtherInput } from './components/EtherInput';
 import {
   useHistory 
 } from "react-router-dom";
+import { convertToPrecision } from './util';
+import BigNumber from 'bignumber.js'
+const bnMultiplier = (new BigNumber(10)).pow(18);
 
 const supportedTokens = [
   {
@@ -17,7 +22,7 @@ const supportedTokens = [
 
 export default function Grant (props) {
   const history = useHistory();
-  const { accounts } = props;
+  const { accounts, provider } = props;
   const [sender, setSender] = useState(accounts[0]);
   const [selectedToken, setSelectedToken] = useState(supportedTokens[0].address);
   const [recipient, setRecipient] = useState('');
@@ -40,9 +45,17 @@ export default function Grant (props) {
       </select>
   
       <p>Who to grant this allowance to?</p>
-      <input id="recipientAddress" placeholder="0x......" onChange={(event) => {
+      <AddressInput
+        autoFocus
+        ensProvider={provider}
+        placeholder="Enter address"
+        value={recipient}
+        onChange={setRecipient}
+      />
+
+      {/* <input id="recipientAddress" placeholder="0x......" onChange={(event) => {
         setRecipient(event.target.value);
-      }}></input>
+      }}></input> */}
       <p>What token do you want to grant?</p>
       <select value={selectedToken}
         onChange={(event) => {
@@ -55,13 +68,31 @@ export default function Grant (props) {
         })}
       </select>
       <p>How many of those tokens would you like to grant?</p>
-      <input id="quantity" placeholder="0" type="number" onChange={(event) => {
+
+      <EtherInput
+        autofocus
+        value={amount}
+        placeholder="Enter amount"
+        onChange={value => {
+          setAmount(value);
+        }}
+      /><br/>
+
+      {/* <input id="quantity" placeholder="0" type="number" onChange={(event) => {
         setAmount(event.target.value);
-      }}></input><br/>
+      }}></input><br/> */}
       <div onClick={async (event) => {
         event.preventDefault();
         try {
-          const result = await signERC2612Permit(window.ethereum, selectedToken, sender, recipient, amount);
+          console.log(`let's try to convert ${typeof amount}`)
+          const unDecimaled = convertToPrecision(parseFloat(amount), 18);
+
+          let bnVal = new BigNumber(amount);
+          console.log(`the ${amount} made the bn ${bnVal.toFixed()}`)
+          bnVal = bnVal.mul(bnMultiplier)
+          console.log(`times 10^18 is ${bnVal.toFixed()}`)
+
+          const result = await signERC2612Permit(window.ethereum, selectedToken, sender, recipient, bnVal.toFixed());
           console.dir(result);
           const json = JSON.stringify(result);
           const param = encodeURI(json);
