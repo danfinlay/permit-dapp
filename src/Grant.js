@@ -5,7 +5,6 @@ import { default as EtherInput } from './components/EtherInput';
 import {
   useHistory 
 } from "react-router-dom";
-import { convertToPrecision } from './util';
 import BigNumber from 'bignumber.js'
 const bnMultiplier = (new BigNumber(10)).pow(18);
 
@@ -85,7 +84,6 @@ export default function Grant (props) {
         event.preventDefault();
         try {
           console.log(`let's try to convert ${typeof amount}`)
-          const unDecimaled = convertToPrecision(parseFloat(amount), 18);
 
           let bnVal = new BigNumber(amount);
           console.log(`the ${amount} made the bn ${bnVal.toFixed()}`)

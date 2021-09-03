@@ -1,6 +1,5 @@
 import { Input } from "antd";
 import React, { useEffect, useState } from "react";
-import { convertToPrecision } from '../util';
 
 // small change in useEffect, display currentValue if it's provided by user
 
